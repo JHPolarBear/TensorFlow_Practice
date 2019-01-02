@@ -11,7 +11,7 @@ import tensorflow as tf
 
 node1 = tf.constant(3.0, tf.float32)	# tf.float32 타입으로 텐서 생성
 node2 = tf.constant(4.0)				# 묵시적으로 tf.float32로 형변환이 이루어짐
-node3 = tf.add(node1, node2)
+node3 = tf.add(node1, node2)			# 더하기 연산도 별도의 노드를 생성하여 더할 노드들을 추가해준다
 
 # 각 노드를 출력하면 그 안의 값이 아닌 노드(텐서)의 타입 정보가 출력된다
 print("node1:", node1, "node2:", node2)
@@ -21,5 +21,6 @@ print("node3:", node3)
 sess = tf.Session()
 
 # 세션을 생성하고 세션으로 각 텐서를 실행시키면 텐서 안에 저장되어 있는 오퍼레이션이 실행된다.
-print("sess.run(node1, node2): ", sess.run(node1, node2) )
+# 여러 노드를 실행시킬때는 배열 형식으로 작성해야 한다
+print("sess.run(node1, node2): ", sess.run([node1, node2]) )
 print("sess.run(node3): ", sess.run(node3) )
