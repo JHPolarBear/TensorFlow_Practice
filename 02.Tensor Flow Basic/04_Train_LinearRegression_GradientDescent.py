@@ -9,15 +9,15 @@
 # import tensorflow
 import tensorflow as tf
 
-#import matplotlib
-import matplotlib.pyplot as plt
-
 # H(x) = Wx + b (Linear Regression)
-W = tf.placeholder(tf.float32)
+W = tf.Variable(tf.random_normal([1]), name = 'weight')
 
 # X && Y Data
-X = [1,2,3]
-Y = [1,2,3]
+X = tf.placeholder(tf.float32)
+Y = tf.placeholder(tf.float32)
+
+x_data = [1,2,3]
+y_data = [1,2,3]
 
 # H(x) 방정식 선언
 hypothesis = X*W
@@ -25,22 +25,26 @@ hypothesis = X*W
 # Cost 방정식
 cost = tf.reduce_mean(tf.square(hypothesis - Y))
 
+# Minimize function (optimizer로 하던걸 직접 구현)
+learning_rate = 0.1
+gradient = tf.reduce_mean((W*X-Y)*X)
+descent = W - learning_rate*gradient
+update = W.assign(descent)
+
+#위의 cost minimization을 해주는 optimizer
+#지금이야 식이 간단하니 직접 미분을 했지만 실제로는 아래 함수를 사용합시다.
+#optimizer = tf.train.GradientDescentOptimizer(learning_rate = 0.1)
+#train = optimizer.minimize(cost)
+
 # Create session
 sess = tf.Session()
 
 # variable 초기화
 sess.run(tf.global_variables_initializer())
 
-W_val = []
-cost_val = []
-
 # 학습 진행
-for i in range(-30, 50):
-	feed_W = i*0.1
-	curr_cost, curr_W = sess.run([cost, W], feed_dict = {W: feed_W})
-	W_val.append(curr_W)
-	cost_val.append(curr_cost)
-
-# 그래프 출력
-plt.plot(W_val, cost_val)
-plt.show()
+for step in range(21):
+	sess.run( update, feed_dict = {X: x_data, Y: y_data})
+	
+	#Create Log at every 20th step
+	print (step, sess.run(cost, feed_dict = {X: x_data, Y: y_data}), sess.run(W))
